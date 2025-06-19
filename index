@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Programme RAID - Mathis</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0; padding: 0;
+      background: #e5ecf6;
+      color: #1f2937;
+    }
+    header {
+      background: linear-gradient(to right, #1e3a8a, #3b82f6);
+      color: white;
+      padding: 2.5rem 1rem;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    header h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    nav {
+      display: flex;
+      justify-content: space-around;
+      background: #2563eb;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    nav button {
+      flex: 1;
+      padding: 1rem;
+      border: none;
+      background: transparent;
+      color: white;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    nav button:hover, nav button.active {
+      background: #1d4ed8;
+    }
+    section {
+      display: none;
+      padding: 2rem;
+      max-width: 1100px;
+      margin: auto;
+    }
+    section.active {
+      display: block;
+    }
+    .card {
+      background: white;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+    }
+    h2 {
+      color: #1e40af;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    table th, table td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #d1d5db;
+    }
+    table th {
+      background-color: #eff6ff;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    ul li::before {
+      content: '✔';
+      color: #10b981;
+      margin-right: 0.5rem;
+    }
+    label, input {
+      display: block;
+      margin: 0.8rem 0 0.4rem;
+      font-weight: 500;
+    }
+    input, button[type=submit] {
+      padding: 0.8rem;
+      width: 100%;
+      max-width: 400px;
+      font-size: 1rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      transition: border 0.3s;
+    }
+    input:focus, button[type=submit]:hover {
+      border-color: #3b82f6;
+      outline: none;
+    }
+    button[type=submit] {
+      margin-top: 1rem;
+      background: #3b82f6;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+    canvas {
+      max-width: 100%;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🏋️‍♂️ Programme RAID - Mathis</h1>
+  <p>Ton application interactive pour l'entraînement, la nutrition et le suivi de progression</p>
+</header>
+
+<nav>
+  <button class="active" onclick="showSection('accueil')">Accueil</button>
+  <button onclick="showSection('nutrition')">Nutrition</button>
+  <button onclick="showSection('entrainement')">Entraînement</button>
+  <button onclick="showSection('progression')">Progression</button>
+</nav>
+
+<section id="accueil" class="active">
+  <div class="card">
+    <h2>Bienvenue sur ton app RAID, Mathis</h2>
+    <p>Cette web app te permet de :</p>
+    <ul>
+      <li>Suivre ta diète personnalisée pour la prise de masse</li>
+      <li>Suivre ton programme d'entraînement quotidien</li>
+      <li>Enregistrer et visualiser tes progrès physiques</li>
+    </ul>
+  </div>
+</section>
+
+<section id="nutrition">
+  <div class="card">
+    <h2>Plan Nutrition</h2>
+    <ul>
+      <li>Protéines : 2g/kg → ~130g/jour</li>
+      <li>Glucides complexes : riz, avoine, patate douce</li>
+      <li>Lipides sains : œufs, avocat, huile d’olive</li>
+      <li>Hydratation : 2 à 3L par jour</li>
+    </ul>
+  </div>
+</section>
+
+<section id="entrainement">
+  <div class="card">
+    <h2>Programme Hebdomadaire</h2>
+    <table>
+      <tr><th>Jour</th><th>Entraînement détaillé</th></tr>
+      <tr><td><strong>Lundi</strong></td><td>Renforcement haut du corps :<br>🔹 Tractions strictes : 5x max reps<br>🔹 Pompes variées (diamant, classiques, larges) : 5x20<br>🔹 Squats sautés : 5x15<br>🔹 Gainage : 3x1min</td></tr>
+      <tr><td><strong>Mardi</strong></td><td>Cardio et natation :<br>🔹 Fractionné 30/30 sur 20 min (8-10 séries)<br>🔹 Natation : 1000m en crawl, brasse, apnée</td></tr>
+      <tr><td><strong>Mercredi</strong></td><td>Repos actif :<br>🔹 Mobilité (étirements dynamiques 30min)<br>🔹 Footing léger 20-30min</td></tr>
+      <tr><td><strong>Jeudi</strong></td><td>Renforcement tronc + bas du corps :<br>🔹 Dips : 4x max reps<br>🔹 Fentes dynamiques : 4x12 par jambe<br>🔹 Gainage latéral : 3x45s par côté<br>🔹 Pompes claquées : 4x12</td></tr>
+      <tr><td><strong>Vendredi</strong></td><td>Endurance fondamentale :<br>🔹 Footing 45 min en zone 2<br>🔹 Étirements statiques post-course</td></tr>
+      <tr><td><strong>Samedi</strong></td><td>Circuit RAID (intensif) :<br>🔹 3 rounds :<br> 1. Tractions x10<br> 2. Pompes x20<br> 3. Squats sautés x15<br> 4. Burpees x10<br> 5. 100m sprint<br> Repos 2 min entre chaque round</td></tr>
+      <tr><td><strong>Dimanche</strong></td><td>Repos complet ou marche 45min</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="progression">
+  <div class="card">
+    <h2>Suivi de progression</h2>
+    <form onsubmit="saveProgress(); return false;">
+      <label for="weight">Poids (kg)</label>
+      <input type="number" id="weight" required>
+
+      <label for="tractions">Tractions max</label>
+      <input type="number" id="tractions" required>
+
+      <label for="luc">Palier Luc Léger</label>
+      <input type="text" id="luc" required>
+
+      <button type="submit">💾 Sauvegarder</button>
+    </form>
+    <canvas id="progressChart" height="150"></canvas>
+  </div>
+</section>
+
+<script>
+  const buttons = document.querySelectorAll("nav button");
+  function showSection(id) {
+    document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    buttons.forEach(b => b.classList.remove("active"));
+    event.target.classList.add("active");
+    if (id === "progression") loadChart();
+  }
+
+  function saveProgress() {
+    const weight = document.getElementById("weight").value;
+    const tractions = document.getElementById("tractions").value;
+    const luc = document.getElementById("luc").value;
+    const date = new Date().toLocaleDateString();
+
+    const data = JSON.parse(localStorage.getItem("progressData") || "[]");
+    data.push({ date, weight, tractions, luc });
+    localStorage.setItem("progressData", JSON.stringify(data));
+    loadChart();
+  }
+
+  function loadChart() {
+    const data = JSON.parse(localStorage.getItem("progressData") || "[]");
+    const labels = data.map(d => d.date);
+    const weights = data.map(d => d.weight);
+    const tractions = data.map(d => d.tractions);
+
+    const ctx = document.getElementById("progressChart").getContext("2d");
+    if (window.myChart) window.myChart.destroy();
+    window.myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Poids (kg)',
+            data: weights,
+            borderColor: '#3b82f6',
+            fill: false
+          },
+          {
+            label: 'Tractions',
+            data: tractions,
+            borderColor: '#10b981',
+            fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: true,
+            text: 'Évolution physique'
+          }
+        }
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
