@@ -68,6 +68,7 @@
       border: none;
       background: #333;
       color: white;
+      width: 80px;
     }
     .save-btn, .theme-btn {
       background: var(--accent-color);
@@ -130,7 +131,7 @@
     <p>👋 Utilise cette application pour :</p>
     <ul>
       <li>📅 Visualiser ton planning hebdo</li>
-      <li>✏️ Modifier exercices, poids & reps facilement</li>
+      <li>✏️ Modifier exercices, poids, reps & séries</li>
       <li>📊 Suivre ta progression avec des graphiques</li>
     </ul>
     <p>Active le mode clair 🌞 ou sombre 🌙 avec le bouton en haut à droite.</p>
@@ -154,31 +155,31 @@
   <script>
     const weekData = {
       "Lundi": [
-        { exo: "Tractions lestées", poids: 10, reps: 5 },
-        { exo: "Dips lestés", poids: 10, reps: 6 }
+        { exo: "Tractions lestées", poids: 10, reps: 5, series: 5 },
+        { exo: "Dips lestés", poids: 10, reps: 6, series: 5 }
       ],
       "Mardi": [
-        { exo: "Sprint 30m", poids: 0, reps: 6 },
-        { exo: "Planche", poids: 0, reps: 3 }
+        { exo: "Sprint 30m", poids: 0, reps: 6, series: 3 },
+        { exo: "Planche", poids: 0, reps: 3, series: 1 }
       ],
       "Mercredi": [
-        { exo: "Tractions", poids: 0, reps: 10 },
-        { exo: "Pompes", poids: 0, reps: 15 }
+        { exo: "Tractions", poids: 0, reps: 10, series: 4 },
+        { exo: "Pompes", poids: 0, reps: 15, series: 4 }
       ],
       "Jeudi": [
-        { exo: "Pompes lestées", poids: 10, reps: 8 },
-        { exo: "Dips", poids: 0, reps: 12 }
+        { exo: "Pompes lestées", poids: 10, reps: 8, series: 5 },
+        { exo: "Dips", poids: 0, reps: 12, series: 5 }
       ],
       "Vendredi": [
-        { exo: "Course 3 km", poids: 0, reps: 1 },
-        { exo: "Gainage", poids: 0, reps: 3 }
+        { exo: "Course 3 km", poids: 0, reps: 1, series: 1 },
+        { exo: "Gainage", poids: 0, reps: 3, series: 1 }
       ],
       "Samedi": [
-        { exo: "Tractions lestées", poids: 10, reps: 5 },
-        { exo: "Pompes", poids: 0, reps: 20 }
+        { exo: "Tractions lestées", poids: 10, reps: 5, series: 5 },
+        { exo: "Pompes", poids: 0, reps: 20, series: 4 }
       ],
       "Dimanche": [
-        { exo: "Repos actif", poids: 0, reps: 1 }
+        { exo: "Repos actif", poids: 0, reps: 1, series: 1 }
       ]
     };
 
@@ -209,6 +210,8 @@
               <input type="number" class="poids" value="${e.poids}">
               <label>Répétitions:</label>
               <input type="number" class="reps" value="${e.reps}">
+              <label>Séries:</label>
+              <input type="number" class="series" value="${e.series}">
             </div>`;
         });
         container.appendChild(box);
@@ -225,7 +228,8 @@
           const exo = exDiv.querySelector('.exo').value;
           const poids = parseInt(exDiv.querySelector('.poids').value);
           const reps = parseInt(exDiv.querySelector('.reps').value);
-          exercises.push({ exo, poids, reps });
+          const series = parseInt(exDiv.querySelector('.series').value);
+          exercises.push({ exo, poids, reps, series });
         });
         data[dayName] = exercises;
       });
@@ -237,7 +241,7 @@
       const saved = localStorage.getItem("programmeData");
       const data = saved ? JSON.parse(saved) : weekData;
       const labels = Object.keys(data);
-      const values = labels.map(d => data[d].reduce((sum, e) => sum + e.reps, 0));
+      const values = labels.map(d => data[d].reduce((sum, e) => sum + (e.reps * e.series), 0));
 
       const ctx = document.getElementById('progressChart').getContext('2d');
       if (window.repChart) window.repChart.destroy();
@@ -246,7 +250,7 @@
         data: {
           labels: labels,
           datasets: [{
-            label: 'Total de répétitions',
+            label: 'Total de répétitions (reps x séries)',
             data: values,
             backgroundColor: 'rgba(0, 212, 255, 0.6)',
             borderColor: '#00d4ff',
