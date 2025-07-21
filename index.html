@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Programme Entraînement - Mathis</title>
+  <title>Programme Entraînement</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     :root {
@@ -18,20 +18,35 @@
       --accent-color: #0077cc;
     }
     body {
-      font-family: 'Segoe UI', sans-serif;
       margin: 0;
+      font-family: 'Segoe UI', sans-serif;
       background: var(--bg-color);
       color: var(--text-color);
-      padding: 0 10px;
-      transition: background 0.3s, color 0.3s;
+      transition: all 0.3s ease;
     }
-    h1, h2 {
+    header {
+      background: var(--box-color);
+      padding: 20px;
       text-align: center;
-      color: var(--accent-color);
+    }
+    nav {
+      display: flex;
+      justify-content: space-around;
+      background: var(--box-color);
+      padding: 10px;
+      border-bottom: 1px solid #333;
+    }
+    nav a {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+    .container {
+      padding: 20px;
     }
     .day {
       background: var(--box-color);
-      border: 1px solid #333;
       border-radius: 10px;
       margin: 10px 0;
       padding: 10px;
@@ -39,194 +54,200 @@
     .exercise {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
       align-items: center;
-      margin: 8px 0;
+      gap: 10px;
+      margin: 10px 0;
     }
-    input[type="text"],
-    input[type="number"] {
-      padding: 5px;
-      border: none;
-      border-radius: 5px;
-      width: 30%;
-      background: #333;
-      color: white;
-    }
-    label {
+    .exercise label {
       flex: 1;
       min-width: 100px;
     }
-    .checkbox {
-      transform: scale(1.3);
-    }
-    .save {
-      text-align: center;
-      margin-top: 20px;
-    }
-    button {
-      padding: 10px 20px;
-      background: var(--accent-color);
+    .exercise input {
+      padding: 5px;
+      border-radius: 5px;
       border: none;
-      border-radius: 10px;
+      background: #333;
+      color: white;
+    }
+    .save-btn, .theme-btn {
+      background: var(--accent-color);
       color: var(--bg-color);
-      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
       cursor: pointer;
-      margin: 5px;
+      margin: 10px 0;
+    }
+    .theme-btn {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      padding: 5px 10px;
+      font-size: 0.8em;
+      border-radius: 20px;
     }
     canvas {
-      background: #fff;
-      border-radius: 10px;
-      padding: 10px;
       width: 100%;
       max-width: 600px;
-      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      margin: 20px auto;
       display: block;
     }
-    @media (max-width: 600px) {
-      .exercise {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      input[type="text"],
-      input[type="number"] {
-        width: 100%;
-      }
+    .hero {
+      background: var(--accent-color);
+      color: var(--bg-color);
+      padding: 30px 20px;
+      text-align: center;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .hero h2 {
+      margin: 0 0 10px;
+    }
+    .hero p {
+      font-size: 1.1em;
     }
   </style>
 </head>
 <body>
+  <header>
+    <h1>Programme d'Entraînement</h1>
+    <button class="theme-btn" onclick="toggleTheme()">🌗</button>
+  </header>
+  <nav>
+    <a href="#home" onclick="showPage('home')">🏠 Accueil</a>
+    <a href="#suivi" onclick="showPage('suivi')">📋 Suivi</a>
+    <a href="#progress" onclick="showPage('progress')">📈 Progression</a>
+  </nav>
 
-<h1>Entraînement Hebdo - Mathis</h1>
-<div class="save">
-  <button onclick="saveData()">💾 Sauvegarder</button>
-  <button onclick="toggleTheme()">🌓 Thème</button>
-  <button onclick="updateGraph()">📊 Voir Graphique</button>
-</div>
-<div id="programme"></div>
-<h2>Progression Hebdo (Total reps)</h2>
-<canvas id="progressChart" height="200"></canvas>
+  <!-- Accueil -->
+  <div class="container" id="home">
+    <div class="hero">
+      <h2>Bienvenue dans ton app d'entraînement, Mathis 💪</h2>
+      <p>Transforme ta routine. Suis ton évolution. Deviens inarrêtable.</p>
+    </div>
+    <p>👋 Utilise cette application pour :</p>
+    <ul>
+      <li>📅 Visualiser ton planning hebdo</li>
+      <li>✏️ Modifier exercices, poids & reps facilement</li>
+      <li>📊 Suivre ta progression avec des graphiques</li>
+    </ul>
+    <p>Active le mode clair 🌞 ou sombre 🌙 avec le bouton en haut à droite.</p>
+  </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-const weekData = {
-  "Lundi": [
-    { exo: "Tractions lestées", poids: 10, reps: 5 },
-    { exo: "Dips lestés", poids: 10, reps: 6 },
-    { exo: "Pompes sac à dos", poids: 8, reps: 10 }
-  ],
-  "Mardi": [
-    { exo: "Sprint 30m", poids: 0, reps: 6 },
-    { exo: "Planche", poids: 0, reps: 3 },
-    { exo: "Pompes tempo", poids: 0, reps: 10 }
-  ],
-  "Mercredi": [
-    { exo: "Tractions", poids: 0, reps: 10 },
-    { exo: "Dips", poids: 0, reps: 10 },
-    { exo: "Pompes", poids: 0, reps: 10 }
-  ],
-  "Jeudi": [
-    { exo: "Étirements dynamiques", poids: 0, reps: 15 },
-    { exo: "Planche", poids: 0, reps: 2 },
-    { exo: "Marche / Vélo", poids: 0, reps: 30 }
-  ],
-  "Vendredi": [
-    { exo: "Tractions lestées", poids: 10, reps: 4 },
-    { exo: "Dips lestés", poids: 10, reps: 5 },
-    { exo: "Pompes lestées", poids: 8, reps: 15 }
-  ],
-  "Samedi": [
-    { exo: "Tractions", poids: 0, reps: 10 },
-    { exo: "Dips", poids: 0, reps: 10 },
-    { exo: "Pompes", poids: 0, reps: 10 },
-    { exo: "Squats", poids: 0, reps: 50 }
-  ],
-  "Dimanche": [
-    { exo: "Repos complet", poids: 0, reps: 0 }
-  ]
-};
+  <!-- Suivi -->
+  <div class="container" id="suivi" style="display:none">
+    <h2>Suivi Hebdomadaire</h2>
+    <div id="programme"></div>
+    <button class="save-btn" onclick="saveData()">💾 Sauvegarder</button>
+  </div>
 
-function loadData() {
-  const saved = localStorage.getItem("programmeMathis");
-  return saved ? JSON.parse(saved) : weekData;
-}
+  <!-- Progression -->
+  <div class="container" id="progress" style="display:none">
+    <h2>Graphique de Progression</h2>
+    <canvas id="progressChart"></canvas>
+    <button class="save-btn" onclick="updateGraph()">🔄 Mettre à jour</button>
+  </div>
 
-function saveData() {
-  const data = {};
-  document.querySelectorAll(".day").forEach(day => {
-    const name = day.getAttribute("data-day");
-    data[name] = [];
-    day.querySelectorAll(".exercise").forEach(ex => {
-      const exo = ex.querySelector(".exo").value;
-      const poids = parseFloat(ex.querySelector(".poids").value);
-      const reps = parseInt(ex.querySelector(".reps").value);
-      const checked = ex.querySelector(".check").checked;
-      data[name].push({ exo, poids, reps, checked });
-    });
-  });
-  localStorage.setItem("programmeMathis", JSON.stringify(data));
-  alert("💾 Données enregistrées !");
-}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const weekData = {
+      "Lundi": [
+        { exo: "Tractions lestées", poids: 10, reps: 5 },
+        { exo: "Dips lestés", poids: 10, reps: 6 }
+      ],
+      "Mardi": [
+        { exo: "Sprint 30m", poids: 0, reps: 6 },
+        { exo: "Planche", poids: 0, reps: 3 }
+      ],
+      "Mercredi": [
+        { exo: "Tractions", poids: 0, reps: 10 },
+        { exo: "Pompes", poids: 0, reps: 15 }
+      ]
+    };
 
-function renderProgramme() {
-  const programmeDiv = document.getElementById("programme");
-  const data = loadData();
-  for (const day in data) {
-    const dayDiv = document.createElement("div");
-    dayDiv.className = "day";
-    dayDiv.setAttribute("data-day", day);
-    const title = document.createElement("h2");
-    title.textContent = day;
-    dayDiv.appendChild(title);
-    data[day].forEach((e, i) => {
-      const div = document.createElement("div");
-      div.className = "exercise";
-      div.innerHTML = `
-        <input type="text" class="exo" value="${e.exo}">
-        <input type="number" class="poids" value="${e.poids}" min="0" step="1">
-        <input type="number" class="reps" value="${e.reps}" min="0" step="1">
-        <input type="checkbox" class="check checkbox" ${e.checked ? "checked" : ""}>
-      `;
-      dayDiv.appendChild(div);
-    });
-    programmeDiv.appendChild(dayDiv);
-  }
-}
+    function toggleTheme() {
+      document.body.classList.toggle("light");
+    }
 
-function toggleTheme() {
-  document.body.classList.toggle("light");
-}
+    function showPage(id) {
+      document.querySelectorAll('.container').forEach(div => div.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+    }
 
-function updateGraph() {
-  const data = loadData();
-  const days = Object.keys(data);
-  const totalReps = days.map(day =>
-    data[day].reduce((sum, e) => sum + (e.checked ? e.reps : 0), 0)
-  );
-
-  if (window.repChart) window.repChart.destroy();
-  const ctx = document.getElementById("progressChart").getContext("2d");
-  window.repChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: days,
-      datasets: [{
-        label: 'Total de répétitions validées',
-        data: totalReps,
-        backgroundColor: 'rgba(0, 212, 255, 0.6)',
-        borderColor: '#00d4ff',
-        borderWidth: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        y: { beginAtZero: true }
+    function renderProgramme() {
+      const saved = localStorage.getItem("programmeData");
+      const data = saved ? JSON.parse(saved) : weekData;
+      const container = document.getElementById("programme");
+      container.innerHTML = "";
+      for (const day in data) {
+        const box = document.createElement("div");
+        box.className = "day";
+        box.innerHTML = `<h3>${day}</h3>`;
+        data[day].forEach((e, i) => {
+          box.innerHTML += `
+            <div class="exercise">
+              <label>Exercice:</label>
+              <input type="text" class="exo" value="${e.exo}">
+              <label>Poids (kg):</label>
+              <input type="number" class="poids" value="${e.poids}">
+              <label>Répétitions:</label>
+              <input type="number" class="reps" value="${e.reps}">
+            </div>`;
+        });
+        container.appendChild(box);
       }
     }
-  });
-}
 
-renderProgramme();
-</script>
+    function saveData() {
+      const days = document.querySelectorAll('.day');
+      const data = {};
+      days.forEach(dayBox => {
+        const dayName = dayBox.querySelector('h3').innerText;
+        const exercises = [];
+        dayBox.querySelectorAll('.exercise').forEach(exDiv => {
+          const exo = exDiv.querySelector('.exo').value;
+          const poids = parseInt(exDiv.querySelector('.poids').value);
+          const reps = parseInt(exDiv.querySelector('.reps').value);
+          exercises.push({ exo, poids, reps });
+        });
+        data[dayName] = exercises;
+      });
+      localStorage.setItem("programmeData", JSON.stringify(data));
+      alert("✅ Données enregistrées !");
+    }
+
+    function updateGraph() {
+      const saved = localStorage.getItem("programmeData");
+      const data = saved ? JSON.parse(saved) : weekData;
+      const labels = Object.keys(data);
+      const values = labels.map(d => data[d].reduce((sum, e) => sum + e.reps, 0));
+
+      const ctx = document.getElementById('progressChart').getContext('2d');
+      if (window.repChart) window.repChart.destroy();
+      window.repChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Total de répétitions',
+            data: values,
+            backgroundColor: 'rgba(0, 212, 255, 0.6)',
+            borderColor: '#00d4ff',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    renderProgramme();
+  </script>
 </body>
 </html>
