@@ -1,136 +1,232 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Programme RAID - Suivi</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3062/3062634.png" type="image/png">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3062/3062634.png">
+  <meta charset="UTF-8">
+  <title>Programme Entraînement - Mathis</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg-color: #121212;
+      --text-color: #f0f0f0;
+      --box-color: #1e1e1e;
+      --accent-color: #00d4ff;
+    }
+    body.light {
+      --bg-color: #f0f0f0;
+      --text-color: #121212;
+      --box-color: #ffffff;
+      --accent-color: #0077cc;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      padding: 0 10px;
+      transition: background 0.3s, color 0.3s;
+    }
+    h1, h2 {
+      text-align: center;
+      color: var(--accent-color);
+    }
+    .day {
+      background: var(--box-color);
+      border: 1px solid #333;
+      border-radius: 10px;
+      margin: 10px 0;
+      padding: 10px;
+    }
+    .exercise {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin: 8px 0;
+    }
+    input[type="text"],
+    input[type="number"] {
+      padding: 5px;
+      border: none;
+      border-radius: 5px;
+      width: 30%;
+      background: #333;
+      color: white;
+    }
+    label {
+      flex: 1;
+      min-width: 100px;
+    }
+    .checkbox {
+      transform: scale(1.3);
+    }
+    .save {
+      text-align: center;
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      background: var(--accent-color);
+      border: none;
+      border-radius: 10px;
+      color: var(--bg-color);
+      font-weight: bold;
+      cursor: pointer;
+      margin: 5px;
+    }
+    canvas {
+      background: #fff;
+      border-radius: 10px;
+      padding: 10px;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      display: block;
+    }
+    @media (max-width: 600px) {
+      .exercise {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      input[type="text"],
+      input[type="number"] {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1><i class="fas fa-shield-alt"></i> Entraînement RAID</h1>
-        <nav>
-            <a href="#accueil"><i class="fas fa-home"></i> Accueil</a>
-            <a href="#entrainement"><i class="fas fa-dumbbell"></i> Entraînement</a>
-            <a href="#nutrition"><i class="fas fa-apple-alt"></i> Nutrition</a>
-            <a href="#suivi"><i class="fas fa-chart-line"></i> Suivi</a>
-        </nav>
-    </header>
 
-    <main>
-        <section id="accueil">
-            <h2>Bienvenue sur ton programme RAID</h2>
-            <p>Cette application t’accompagne dans ton évolution physique et mentale vers le niveau d’élite requis pour intégrer le RAID.</p>
-        </section>
+<h1>Entraînement Hebdo - Mathis</h1>
+<div class="save">
+  <button onclick="saveData()">💾 Sauvegarder</button>
+  <button onclick="toggleTheme()">🌓 Thème</button>
+  <button onclick="updateGraph()">📊 Voir Graphique</button>
+</div>
+<div id="programme"></div>
+<h2>Progression Hebdo (Total reps)</h2>
+<canvas id="progressChart" height="200"></canvas>
 
-        <section id="entrainement">
-            <h2><i class="fas fa-dumbbell"></i> Programme d'entraînement</h2>
-            <h3>Semaine type</h3>
-            <ul>
-                <li><strong>Lundi</strong> : Musculation haut du corps + course fractionnée</li>
-                <li><strong>Mardi</strong> : Natation + gainage statique et dynamique</li>
-                <li><strong>Mercredi</strong> : Musculation bas du corps + mobilité</li>
-                <li><strong>Jeudi</strong> : Cardio (Luc Léger ou HIIT) + abdominaux</li>
-                <li><strong>Vendredi</strong> : Travail technique (tractions strictes, pompes explosives)</li>
-                <li><strong>Samedi</strong> : Sortie longue (5 à 10km) + étirements</li>
-                <li><strong>Dimanche</strong> : Repos actif (marche, vélo doux)</li>
-            </ul>
-        </section>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const weekData = {
+  "Lundi": [
+    { exo: "Tractions lestées", poids: 10, reps: 5 },
+    { exo: "Dips lestés", poids: 10, reps: 6 },
+    { exo: "Pompes sac à dos", poids: 8, reps: 10 }
+  ],
+  "Mardi": [
+    { exo: "Sprint 30m", poids: 0, reps: 6 },
+    { exo: "Planche", poids: 0, reps: 3 },
+    { exo: "Pompes tempo", poids: 0, reps: 10 }
+  ],
+  "Mercredi": [
+    { exo: "Tractions", poids: 0, reps: 10 },
+    { exo: "Dips", poids: 0, reps: 10 },
+    { exo: "Pompes", poids: 0, reps: 10 }
+  ],
+  "Jeudi": [
+    { exo: "Étirements dynamiques", poids: 0, reps: 15 },
+    { exo: "Planche", poids: 0, reps: 2 },
+    { exo: "Marche / Vélo", poids: 0, reps: 30 }
+  ],
+  "Vendredi": [
+    { exo: "Tractions lestées", poids: 10, reps: 4 },
+    { exo: "Dips lestés", poids: 10, reps: 5 },
+    { exo: "Pompes lestées", poids: 8, reps: 15 }
+  ],
+  "Samedi": [
+    { exo: "Tractions", poids: 0, reps: 10 },
+    { exo: "Dips", poids: 0, reps: 10 },
+    { exo: "Pompes", poids: 0, reps: 10 },
+    { exo: "Squats", poids: 0, reps: 50 }
+  ],
+  "Dimanche": [
+    { exo: "Repos complet", poids: 0, reps: 0 }
+  ]
+};
 
-        <section id="nutrition">
-            <h2><i class="fas fa-apple-alt"></i> Nutrition</h2>
-            <p>Objectif : prise de masse légère (65 → 70kg)</p>
-            <ul>
-                <li>Protéines : 2g/kg de poids de corps (≈ 130g)</li>
-                <li>Glucides : féculents complets (riz, avoine, patate douce)</li>
-                <li>Lipides : huile d’olive, oléagineux</li>
-                <li>Hydratation : minimum 2L/jour</li>
-            </ul>
-        </section>
+function loadData() {
+  const saved = localStorage.getItem("programmeMathis");
+  return saved ? JSON.parse(saved) : weekData;
+}
 
-        <section id="suivi">
-            <h2><i class="fas fa-chart-line"></i> Suivi de progression</h2>
-            <table>
-                <tr><th>Date</th><th>Poids</th><th>Tractions</th><th>Luc Léger</th></tr>
-                <tr><td>2025-06-19</td><td>65 kg</td><td>15</td><td>Palier 10</td></tr>
-            </table>
-            <p><em>Ajoute manuellement ta progression chaque semaine.</em></p>
-        </section>
-    </main>
+function saveData() {
+  const data = {};
+  document.querySelectorAll(".day").forEach(day => {
+    const name = day.getAttribute("data-day");
+    data[name] = [];
+    day.querySelectorAll(".exercise").forEach(ex => {
+      const exo = ex.querySelector(".exo").value;
+      const poids = parseFloat(ex.querySelector(".poids").value);
+      const reps = parseInt(ex.querySelector(".reps").value);
+      const checked = ex.querySelector(".check").checked;
+      data[name].push({ exo, poids, reps, checked });
+    });
+  });
+  localStorage.setItem("programmeMathis", JSON.stringify(data));
+  alert("💾 Données enregistrées !");
+}
 
-    <footer>
-        <p>&copy; 2025 Programme RAID - App perso</p>
-    </footer>
+function renderProgramme() {
+  const programmeDiv = document.getElementById("programme");
+  const data = loadData();
+  for (const day in data) {
+    const dayDiv = document.createElement("div");
+    dayDiv.className = "day";
+    dayDiv.setAttribute("data-day", day);
+    const title = document.createElement("h2");
+    title.textContent = day;
+    dayDiv.appendChild(title);
+    data[day].forEach((e, i) => {
+      const div = document.createElement("div");
+      div.className = "exercise";
+      div.innerHTML = `
+        <input type="text" class="exo" value="${e.exo}">
+        <input type="number" class="poids" value="${e.poids}" min="0" step="1">
+        <input type="number" class="reps" value="${e.reps}" min="0" step="1">
+        <input type="checkbox" class="check checkbox" ${e.checked ? "checked" : ""}>
+      `;
+      dayDiv.appendChild(div);
+    });
+    programmeDiv.appendChild(dayDiv);
+  }
+}
+
+function toggleTheme() {
+  document.body.classList.toggle("light");
+}
+
+function updateGraph() {
+  const data = loadData();
+  const days = Object.keys(data);
+  const totalReps = days.map(day =>
+    data[day].reduce((sum, e) => sum + (e.checked ? e.reps : 0), 0)
+  );
+
+  if (window.repChart) window.repChart.destroy();
+  const ctx = document.getElementById("progressChart").getContext("2d");
+  window.repChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: days,
+      datasets: [{
+        label: 'Total de répétitions validées',
+        data: totalReps,
+        backgroundColor: 'rgba(0, 212, 255, 0.6)',
+        borderColor: '#00d4ff',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+}
+
+renderProgramme();
+</script>
 </body>
 </html>
-"""
-
-css_content = """
-body {
-    font-family: 'Segoe UI', sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #f5f7fa;
-    color: #222;
-}
-
-header {
-    background: #0a1f44;
-    color: white;
-    padding: 20px;
-    text-align: center;
-}
-
-header h1 {
-    margin: 0;
-    font-size: 24px;
-}
-
-nav a {
-    color: white;
-    margin: 0 10px;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-main {
-    padding: 20px;
-}
-
-section {
-    margin-bottom: 40px;
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-}
-
-section h2 {
-    border-bottom: 2px solid #ccc;
-    padding-bottom: 10px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-
-table, th, td {
-    border: 1px solid #ccc;
-}
-
-th, td {
-    padding: 10px;
-    text-align: center;
-}
-
-footer {
-    background: #0a1f44;
-    color: white;
-    text-align: center;
-    padding: 10px;
-}
